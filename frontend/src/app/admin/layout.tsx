@@ -62,14 +62,21 @@ export default function AdminLayout({
       </nav>
       
       <div className="p-4 border-t border-[var(--border)] bg-[var(--surface)] mt-auto">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-            AD
-          </div>
-          <div className="text-sm">
-            <p className="font-semibold text-slate-800">Admin User</p>
-            <p className="text-xs text-slate-500">Superadmin Role</p>
-          </div>
+        <div className="flex flex-col gap-3">
+           <div className="flex items-center gap-3">
+             <div className="h-9 w-9 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+               TA
+             </div>
+             <div className="text-sm">
+               <p className="font-semibold text-slate-800">Kwame Mensah</p>
+               <p className="text-xs text-slate-500">Local Administrator</p>
+             </div>
+           </div>
+           
+           <div className="px-3 py-2 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 font-medium">
+             <span className="text-slate-400 block mb-0.5 text-[10px] uppercase">Assigned Scope</span>
+             KNUST - Computer Science
+           </div>
         </div>
       </div>
     </div>

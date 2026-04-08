@@ -1,22 +1,40 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { StatCard } from "@/components/ui/stat-card";
 
 export default function AdminDashboardPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activityType, setActivityType] = useState("all");
+
   const recentActivities = [
-    { id: 1, action: "Uploaded Passco", target: "CSM 158 - 2023 End of Sem", time: "2 hours ago", user: "Admin", icon: "📄" },
-    { id: 2, action: "Added MCQ Question", target: "Data Structures - Trees", time: "5 hours ago", user: "Dr. Mensah", icon: "🎯" },
-    { id: 3, action: "Created Course", target: "MATH 161", time: "1 day ago", user: "Admin", icon: "🎓" },
-    { id: 4, action: "Verified Solution", target: "CSM 281 Assignment 1", time: "2 days ago", user: "TA Kwame", icon: "✅" },
+    { id: 1, type: "upload", action: "Uploaded Passco", target: "CSM 158 - 2023 End of Sem", time: "2 hours ago", user: "Kwame (Admin)", icon: "📄" },
+    { id: 2, type: "question", action: "Added MCQ Question", target: "Data Structures - Trees", time: "5 hours ago", user: "Dr. Mensah", icon: "🎯" },
+    { id: 3, type: "course", action: "Created Course", target: "MATH 161", time: "1 day ago", user: "Kwame (Admin)", icon: "🎓" },
+    { id: 4, type: "verification", action: "Verified Solution", target: "CSM 281 Assignment 1", time: "2 days ago", user: "TA Kwame", icon: "✅" },
   ];
+
+  const filteredActivities = recentActivities.filter(a => {
+     const matchesSearch = a.action.toLowerCase().includes(searchQuery.toLowerCase()) || a.target.toLowerCase().includes(searchQuery.toLowerCase());
+     const matchesType = activityType === "all" || a.type === activityType;
+     return matchesSearch && matchesType;
+  });
 
   return (
     <div className="space-y-8 animate-fade-in-up">
       {/* ── Page Header ── */}
-      <div>
-        <h1 className="text-2xl font-bold text-[var(--text-primary)]">Admin Overview</h1>
-        <p className="mt-1 text-sm text-[var(--text-secondary)]">
-          Welcome back. Here's what's happening across your connected universities today.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Admin Overview</h1>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            Welcome back, Kwame. Here's what's happening at your institution today.
+          </p>
+        </div>
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-sm font-bold text-blue-800">
+          <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+          Operating in Scope: KNUST
+        </div>
       </div>
 
       {/* ── Top Level Metrics ── */}
@@ -69,19 +87,37 @@ export default function AdminDashboardPage() {
 
         {/* Right Column: Activity Feed */}
         <div className="lg:col-span-2">
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-sm h-full">
-            <div className="p-5 border-b border-[var(--border)] flex items-center justify-between">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-sm h-full flex flex-col">
+            <div className="p-5 border-b border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-tertiary)] shrink-0">
                 Recent Activity
               </h2>
-              <Link href="/admin/activity" className="text-sm font-semibold text-[var(--accent)] hover:underline">
-                View All
-              </Link>
+              {/* Add Search and Filter directly into the card header */}
+              <div className="flex gap-2 w-full sm:w-auto">
+                 <input 
+                    type="text" 
+                    placeholder="Search logs..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="flex-1 sm:w-48 rounded-md border border-slate-300 px-3 py-1.5 text-xs focus:ring-blue-500 focus:border-blue-500 bg-white"
+                 />
+                 <select 
+                    value={activityType}
+                    onChange={(e) => setActivityType(e.target.value)}
+                    className="rounded-md border border-slate-300 px-2 py-1.5 text-xs focus:ring-blue-500 focus:border-blue-500 text-slate-600 bg-white"
+                 >
+                    <option value="all">Any Type</option>
+                    <option value="upload">Uploads</option>
+                    <option value="question">Questions</option>
+                    <option value="course">Courses</option>
+                    <option value="verification">Verification</option>
+                 </select>
+              </div>
             </div>
             
-            <div className="p-0">
+            <div className="flex-1">
               <ul className="divide-y divide-[var(--border)]">
-                {recentActivities.map((activity) => (
+                {filteredActivities.length > 0 ? filteredActivities.map((activity) => (
                   <li key={activity.id} className="p-5 hover:bg-[var(--surface-muted)] transition-colors">
                     <div className="flex items-start gap-4">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xl shadow-sm border border-slate-200">
@@ -97,11 +133,15 @@ export default function AdminDashboardPage() {
                       </div>
                     </div>
                   </li>
-                ))}
+                )) : (
+                  <li className="p-10 text-center text-sm text-slate-500">
+                    No activity logs match your filters.
+                  </li>
+                )}
               </ul>
             </div>
             
-            <div className="p-5 border-t border-[var(--border)] bg-[var(--surface-muted)] rounded-b-xl flex items-center justify-center">
+            <div className="p-5 border-t border-[var(--border)] bg-[var(--surface-muted)] rounded-b-xl flex items-center justify-center mt-auto">
                 <span className="text-xs text-slate-400 font-medium tracking-wide">End of recent history</span>
             </div>
           </div>
