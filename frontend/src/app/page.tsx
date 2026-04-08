@@ -35,7 +35,7 @@ export default function Home() {
                 href={`/${activeSchools[0]?.slug ?? "knust"}`}
                 className="rounded-lg bg-white px-6 py-3 text-sm font-semibold text-[var(--accent)] shadow-lg transition-all duration-200 hover:bg-blue-50 hover:shadow-xl hover:-translate-y-0.5"
               >
-                Start Browsing →
+                Get Started →
               </Link>
               <Link
                 href="/programs/computer-science"
